@@ -51,7 +51,7 @@ window.CONFIG = {
     presentes: true,
     dresscode: true,
     manual: true,
-    contagem: false
+    contagem: true
   },
 
   // ----- PIX OPCIONAL (SUGESTÕES DE PRESENTES) ---------------------------
@@ -114,7 +114,7 @@ window.CONFIG = {
   // corLegenda altera a cor de Meses, Dias, Horas, Min e Seg.
   // Aceita hexadecimal, nome de cor ou rgb().
   contagem: {
-    dataEvento: "2026-08-29T18:30:00",
+    dataEvento: "2026-12-29T18:30:00",
     textoFinal: "A festa começou!",
     corNumero: "#ffffff",
     corLegenda: "#ffffff",
