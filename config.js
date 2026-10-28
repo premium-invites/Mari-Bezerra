@@ -89,11 +89,10 @@ window.CONFIG = {
   // mostrarTexto: true mostra “Voltar”; false deixa apenas a área clicável.
   // A posição pode ser alterada no editor ?editor=1.
   botoesVoltar: {
-    presentes: { mostrarTexto:false, posicao: {"left":24.2,"top":83.6,"width":55.0,"height":7.8} },
-    dresscode: { mostrarTexto:true, posicao: {"left":26.805437549920125,"top":86.88550214891683,"width":46.581485248602235,"height":5.424627114446271} },
-    manual: { mostrarTexto:true, posicao: {"left":25.783057732627793,"top":85.2744510457582,"width":47.80830358925719,"height":5.309555171188598} }
+    presentes: { mostrarTexto:false, posicao: {"left":24.39024404744211,"top":85.5271948608137,"width":55.38048809488422,"height":7.050535331905781} },
+    dresscode: { mostrarTexto:false, posicao: {"left":21.859092316425283,"top":89.45509529666843,"width":56.85466381047614,"height":7.1376892129473415} },
+    manual: { mostrarTexto:false, posicao: {"left":23.30988511588037,"top":84.6320527588203,"width":54.84733334461524,"height":6.487285363908084} }
   },
-
   // ----- POSIÇÃO DOS BOTÕES NA TELA PRINCIPAL ----------------------------
   // Valores em PORCENTAGEM da imagem (0 a 100). Para evitar mexer à mão,
   // use o editor (?editor=1) e cole o resultado aqui.
@@ -126,6 +125,6 @@ window.CONFIG = {
   // volume: de 0 (mudo) a 1 (máximo). O padrão 0.30 é agradável e não
   //         briga com o áudio do vídeo.
   musica: {
-    volume: 0.30
+    volume: 0.60
   }
 };
