@@ -51,7 +51,7 @@ window.CONFIG = {
     presentes: true,
     dresscode: true,
     manual: true,
-    contagem: true
+    contagem: false
   },
 
   // ----- PIX OPCIONAL (SUGESTÕES DE PRESENTES) ---------------------------
