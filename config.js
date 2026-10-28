@@ -23,21 +23,21 @@ window.CONFIG = {
   // ----- IDENTIDADE DO CONVITE -------------------------------------------
   // Nome do aniversariante. Aparece no título da aba do navegador e nos
   // textos automáticos do convite.
-  nome: "Maria Helena",
+  nome: "Mari Bezerra",
 
   // ----- WHATSAPP (CONFIRMAR PRESENÇA) -----------------------------------
   // numero: DDI + DDD + número, SÓ DÍGITOS (sem +, espaço, parênteses ou traço).
   //         Ex.: 55 (Brasil) + 31 (DDD) + 985657116 -> "5531985657116"
   // mensagem: texto que já vem pré-preenchido quando a pessoa abre o WhatsApp.
   whatsapp: {
-    numero: "5515991686144",
-    mensagem: "Olá! Confirmo minha presença no aniversário da Maria Helena."
+    numero: "5588981346442",
+    mensagem: "Olá! Confirmo minha presença no aniversário da Mari Bezerra."
   },
 
   // ----- LOCALIZAÇÃO (BOTÃO MAPA) ----------------------------------------
   // Link completo do Google Maps. Abra o local no Maps, clique em "Compartilar"
   // -> "Copiar link" e cole aqui (mantenha as aspas).
-  mapa: "https://share.google/7oyi4t2qFT3dR1Bpf",
+  mapa: "https://www.google.com/maps/place/Cariri+Convention+Center/@-7.2327225,-39.3680327,16.69z/data=!4m6!3m5!1s0x7a183a8d9362631:0x7025a14aa3ac62e!8m2!3d-7.2293275!4d-39.3702329!16s%2Fg%2F11b6hw32gh?entry=ttu&g_ep=EgoyMDI2MTAyMC4wIKXMDSoASAFQAw%3D%3D",
 
   // ----- QUAIS TELAS APARECEM --------------------------------------------
   // video:     true  -> toca o vídeo (assets/video.mp4) depois da abertura.
