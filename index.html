@@ -40,26 +40,28 @@
     .screen{position:fixed;inset:0;display:none;background:#000;align-items:center;justify-content:center;overflow:hidden}
     .screen.active{display:flex}
     .screen::before{content:"";position:absolute;inset:-24px;background:var(--bg-img) center/cover no-repeat;filter:blur(18px);transform:scale(1.08);opacity:.55}
-    .stage{position:relative;z-index:1;height:100%;max-height:100svh;aspect-ratio:941/1672;max-width:100vw}
+    .stage{position:relative;z-index:1;width:min(100vw,calc(100vh * 941 / 1672));width:min(100vw,calc(100svh * 941 / 1672));height:auto;aspect-ratio:941/1672;flex:0 0 auto}
     .art{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;user-select:none;-webkit-user-drag:none;z-index:1}
     #opening{cursor:pointer;--bg-img:url('assets/opening.webp')}
     #mainScreen{--bg-img:url('assets/principal.webp')}
     #giftScreen{--bg-img:url('assets/presentes.webp')}
     #dressScreen{--bg-img:url('assets/dresscode.webp')}
     #manualScreen{--bg-img:url('assets/manual.webp')}
-    #countdownScreen{--bg-img:url('assets/contagem.webp')}
     #videoScreen{--bg-img:url('assets/principal.webp')}
     #videoPlayer{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:contain;background:#000}
     .hotspot{position:absolute;border:0;background:transparent;cursor:pointer;z-index:5}
     .pix-copy{position:absolute;border:0;background:transparent;cursor:pointer;z-index:6}
     .copy-toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom));transform:translateX(-50%) translateY(12px);z-index:50;background:rgba(0,0,0,.84);color:#fff;padding:10px 16px;border-radius:999px;font-size:14px;font-weight:700;opacity:0;pointer-events:none;transition:.2s ease;white-space:nowrap}
     .copy-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-    .countdown-box{position:absolute;z-index:5;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;justify-items:center;column-gap:var(--count-gap,8px);padding:var(--count-padding,8px);text-align:center;color:var(--count-number,#fff);font-variant-numeric:tabular-nums;overflow:visible}
-    .countdown-item{width:100%;min-width:0;text-shadow:0 2px 8px rgba(0,0,0,.48);display:flex;flex-direction:column;align-items:center;justify-content:center}
-    .countdown-value{display:block;font-size:var(--count-value-size,34px);font-weight:900;line-height:1;white-space:nowrap}
+    .countdown-box{position:absolute;z-index:5;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;justify-items:center;text-align:center;color:var(--count-number,#8b0811);font-variant-numeric:tabular-nums;overflow:visible;pointer-events:none;user-select:none}
+    .countdown-item{width:100%;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+    .countdown-value{display:block;font-family:Georgia,"Times New Roman",serif;font-size:var(--count-value-size,34px);font-weight:700;line-height:1;white-space:nowrap}
     .countdown-label{display:block;margin-top:var(--count-label-gap,5px);font-size:var(--count-label-size,11px);font-weight:800;line-height:1.15;letter-spacing:.08em;text-transform:uppercase;color:var(--count-label,#fff);white-space:nowrap}
-    .countdown-message{font-size:clamp(18px,4.4vw,38px);font-weight:900;text-shadow:0 2px 8px rgba(0,0,0,.48)}
-    body.editor-on .countdown-box{background:rgba(255,170,40,.22);outline:2px solid rgba(255,255,255,.95);border-radius:10px}
+    .countdown-box.labels-hidden .countdown-label{display:none}
+    .countdown-box.has-message .countdown-item{visibility:hidden}
+    .countdown-message{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:var(--count-message-size,18px);font-weight:700;line-height:1.1}
+    .countdown-message[hidden]{display:none}
+    body.editor-on .countdown-box{background:rgba(255,170,40,.22);outline:2px solid rgba(255,255,255,.95);border-radius:10px;pointer-events:auto;touch-action:none;cursor:move}
     body.editor-on .countdown-box::before{content:"Contador";position:absolute;left:6px;top:6px;background:#fff;color:#7b3650;border-radius:999px;padding:4px 8px;font-size:12px;font-weight:800;box-shadow:0 2px 8px #0004}
     body.editor-on .countdown-box.selected{background:rgba(50,180,255,.28);outline:3px solid #fff}
     body.editor-on .countdown-box .resize{position:absolute;right:-7px;bottom:-7px;width:18px;height:18px;background:#fff;border:2px solid #7b3650;border-radius:50%;box-shadow:0 2px 8px #0006}
@@ -131,7 +133,13 @@
         <button class="hotspot" id="giftBtn" data-key="gift" data-label="Presentes" aria-label="Ver sugestões de presentes"></button>
         <button class="hotspot" id="dressBtn" data-key="dress" data-label="Dress Code" aria-label="Ver dress code"></button>
         <button class="hotspot" id="manualBtn" data-key="manual" data-label="Manual do Convidado" aria-label="Ver manual do convidado"></button>
-        <button class="hotspot" id="countdownBtn" data-key="countdown" data-label="Contagem" aria-label="Ver contagem regressiva"></button>
+        <div class="countdown-box" id="countdownBox" data-key="counter" role="timer" aria-live="off" aria-label="Contagem regressiva">
+          <div class="countdown-item"><span class="countdown-value" id="countDays">00</span><span class="countdown-label">Dias</span></div>
+          <div class="countdown-item"><span class="countdown-value" id="countHours">00</span><span class="countdown-label">Horas</span></div>
+          <div class="countdown-item"><span class="countdown-value" id="countMinutes">00</span><span class="countdown-label">Min</span></div>
+          <div class="countdown-item"><span class="countdown-value" id="countSeconds">00</span><span class="countdown-label">Seg</span></div>
+          <div class="countdown-message" id="countdownMessage" hidden></div>
+        </div>
       </div>
     </section>
 
@@ -157,19 +165,6 @@
       </div>
     </section>
 
-    <section id="countdownScreen" class="screen" aria-label="Contagem regressiva">
-      <div class="stage" id="countdownStage">
-        <img class="art" src="assets/contagem.webp" alt="Contagem regressiva" loading="lazy" width="941" height="1672">
-        <div class="countdown-box" id="countdownBox" data-key="counter" aria-live="polite">
-          <div class="countdown-item"><span class="countdown-value" id="countMonths">00</span><span class="countdown-label">Meses</span></div>
-          <div class="countdown-item"><span class="countdown-value" id="countDays">00</span><span class="countdown-label">Dias</span></div>
-          <div class="countdown-item"><span class="countdown-value" id="countHours">00</span><span class="countdown-label">Horas</span></div>
-          <div class="countdown-item"><span class="countdown-value" id="countMinutes">00</span><span class="countdown-label">Min</span></div>
-          <div class="countdown-item"><span class="countdown-value" id="countSeconds">00</span><span class="countdown-label">Seg</span></div>
-        </div>
-        <button class="back" id="countdownBackBtn" data-key="backCountdown" data-label="Voltar — Contagem">Voltar</button>
-      </div>
-    </section>
   </main>
   <div class="copy-toast" id="copyToast" role="status" aria-live="polite">Chave PIX copiada!</div>
 
@@ -179,12 +174,12 @@
   <button class="edit-open" id="editOpen" type="button">Editar áreas</button>
   <div class="editor-panel" id="editorPanel">
     <div class="editor-drag-handle" id="editorDragHandle">
-      <b>Editor de áreas de clique</b>
+      <b>Editor de botões e contador</b>
       <button id="centerEditor" type="button" title="Centralizar painel">Centralizar</button>
     </div>
     <div class="editor-mini">Arraste o painel pela barra acima. Arraste a área no convite e puxe a bolinha no canto para aumentar/diminuir. Use <b>?editor=1</b> no link para abrir este editor.</div>
     <div class="editor-row">
-      <select id="areaSelect"><option value="confirm">WhatsApp</option><option value="map">Localização</option><option value="gift">Presentes</option><option value="dress">Dress Code</option><option value="manual">Manual do Convidado</option><option value="countdown">Contagem (botão)</option><option value="counter">Contador (na tela)</option></select>
+      <select id="areaSelect" aria-label="Área para editar"></select>
       <label>L <input id="inpL" type="number" step="0.1"></label>
       <label>T <input id="inpT" type="number" step="0.1"></label>
       <label>W <input id="inpW" type="number" step="0.1"></label>
@@ -208,7 +203,7 @@
   <script src="config.js"></script>
   <script>
     /* ========================================================================
-       ENGINE V4 MODULAR — lê tudo de config.js. Não edite por convite.
+       ENGINE V4 MODULAR — contagem integrada à tela principal.
        ======================================================================== */
     (function(){
       const CFG = window.CONFIG || {};
@@ -237,33 +232,25 @@
         botoesVoltar: Object.assign({
           presentes:{mostrarTexto:true,posicao:{left:3.7,top:1.5,width:20,height:6}},
           dresscode:{mostrarTexto:true,posicao:{left:3.7,top:1.5,width:20,height:6}},
-          manual:{mostrarTexto:true,posicao:{left:3.7,top:1.5,width:20,height:6}},
-          contagem:{mostrarTexto:true,posicao:{left:3.7,top:1.5,width:20,height:6}}
+          manual:{mostrarTexto:true,posicao:{left:3.7,top:1.5,width:20,height:6}}
         }, CFG.botoesVoltar || {}),
         hotspots: CFG.hotspots || {
           confirm:{left:18.5,top:68.8,width:20.5,height:11.2},
           map:{left:39.5,top:68.8,width:20.5,height:11.2},
           gift:{left:60.5,top:68.8,width:18.0,height:11.2},
           dress:{left:79.5,top:68.8,width:18.0,height:11.2},
-          manual:{left:20.0,top:82.0,width:18.0,height:10.0},
-          countdown:{left:39.5,top:82.0,width:21.0,height:10.0}
+          manual:{left:20.0,top:82.0,width:18.0,height:10.0}
         },
         contagem: Object.assign({
-          dataEvento:"2026-12-20T19:30:00",
+          dataEvento:"2027-01-28T18:00:00-03:00",
           textoFinal:"A festa começou!",
-          corNumero:"#ffffff",
-          corLegenda:"#ffffff",
-          posicao:{left:8,top:48,width:84,height:16}
+          corNumero:"#8b0811",
+          corLegenda:"#8b0811",
+          mostrarLegendas:false,
+          posicao:{left:25.4,top:82.8,width:49.8,height:3.4}
         }, CFG.contagem || {}),
         musica: Object.assign({ volume:0.30 }, CFG.musica || {})
       };
-
-      // Compatibilidade: aceita "contagem" ou "countdown" dentro de hotspots.
-      // O nome oficial usado pela Engine é "countdown".
-      if(C.hotspots.contagem && !C.hotspots.countdown){
-        C.hotspots.countdown = C.hotspots.contagem;
-      }
-      delete C.hotspots.contagem;
 
       // ---- APLICAÇÃO DO CONFIG NO DOM ------------------------------------
       document.title = "Convite " + C.nome;
@@ -285,7 +272,6 @@
       if(backBtn) backBtn.textContent = C.textos.voltar;
       if(document.getElementById("dressBackBtn")) document.getElementById("dressBackBtn").textContent = C.textos.voltar;
       if(document.getElementById("manualBackBtn")) document.getElementById("manualBackBtn").textContent = C.textos.voltar;
-      if(document.getElementById("countdownBackBtn")) document.getElementById("countdownBackBtn").textContent = C.textos.voltar;
       if(musicUnlock) musicUnlock.textContent = C.textos.ativarMusica;
 
       // Telas ligáveis/desligáveis
@@ -305,16 +291,15 @@
         pix: hasPix,
         dress: hasDress,
         manual: hasManual,
-        countdown: hasCountdown,
         counter: hasCountdown,
         backGift: hasGift,
         backDress: hasDress,
-        backManual: hasManual,
-        backCountdown: hasCountdown
+        backManual: hasManual
       };
 
       // Hotspots (com override opcional do localStorage, para o editor)
       const STORAGE_KEY = "convite-hotspots-v2:" + location.pathname;
+      const COUNTER_LAYOUT = "principal-v1";
       const $ = (id)=>document.getElementById(id);
       const buttons = {
         confirm: document.getElementById("confirmBtn"),
@@ -323,12 +308,10 @@
         pix: document.getElementById("pixCopyBtn"),
         dress: document.getElementById("dressBtn"),
         manual: document.getElementById("manualBtn"),
-        countdown: document.getElementById("countdownBtn"),
         counter: document.getElementById("countdownBox"),
         backGift: document.getElementById("backBtn"),
         backDress: document.getElementById("dressBackBtn"),
-        backManual: document.getElementById("manualBackBtn"),
-        backCountdown: document.getElementById("countdownBackBtn")
+        backManual: document.getElementById("manualBackBtn")
       };
       let HOTSPOTS = {};
       Object.entries(C.hotspots || {}).forEach(([key,value])=>{
@@ -339,13 +322,14 @@
       if(hasGift) HOTSPOTS.backGift = JSON.parse(JSON.stringify((C.botoesVoltar.presentes||{}).posicao || {left:3.7,top:1.5,width:20,height:6}));
       if(hasDress) HOTSPOTS.backDress = JSON.parse(JSON.stringify((C.botoesVoltar.dresscode||{}).posicao || {left:3.7,top:1.5,width:20,height:6}));
       if(hasManual) HOTSPOTS.backManual = JSON.parse(JSON.stringify((C.botoesVoltar.manual||{}).posicao || {left:3.7,top:1.5,width:20,height:6}));
-      if(hasCountdown) HOTSPOTS.backCountdown = JSON.parse(JSON.stringify((C.botoesVoltar.contagem||{}).posicao || {left:3.7,top:1.5,width:20,height:6}));
 
       // O editor só reaplica posições salvas para recursos que continuam ativos.
       // Assim um botão desativado no config.js nunca reaparece pelo localStorage.
       try {
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
         Object.entries(saved).forEach(([key,value])=>{
+          // A posição antiga do contador pertencia a outra imagem. Preserve os demais ajustes.
+          if(key === "counter" && saved._counterLayout !== COUNTER_LAYOUT) return;
           if(featureEnabled[key] && HOTSPOTS[key]) HOTSPOTS[key] = value;
         });
       } catch(e){}
@@ -363,16 +347,15 @@
       if(!hasGift) $("giftScreen")?.remove();
       if(!hasDress) $("dressScreen")?.remove();
       if(!hasManual) $("manualScreen")?.remove();
-      if(!hasCountdown) $("countdownScreen")?.remove();
+      if(hasCountdown) $("countdownBox").classList.toggle("labels-hidden", C.contagem.mostrarLegendas === false);
 
       const backTextConfig = {
         backGift: (C.botoesVoltar.presentes||{}).mostrarTexto !== false,
         backDress: (C.botoesVoltar.dresscode||{}).mostrarTexto !== false,
-        backManual: (C.botoesVoltar.manual||{}).mostrarTexto !== false,
-        backCountdown: (C.botoesVoltar.contagem||{}).mostrarTexto !== false
+        backManual: (C.botoesVoltar.manual||{}).mostrarTexto !== false
       };
       function applyBackText(){
-        ["backGift","backDress","backManual","backCountdown"].forEach(key=>{
+        ["backGift","backDress","backManual"].forEach(key=>{
           const el=buttons[key]; if(!el) return;
           el.classList.toggle("text-hidden", !backTextConfig[key]);
           el.setAttribute("aria-label", C.textos.voltar);
@@ -401,18 +384,16 @@
 
         // Escala tipografia e espaçamentos proporcionalmente ao próprio bloco.
         // Assim, ao diminuir o contador no editor, tudo reduz junto sem se sobrepor.
-        const cellWidth = rect.width / 5;
-        const valueSize = Math.max(9, Math.min(cellWidth * 0.47, rect.height * 0.42));
-        const labelSize = Math.max(5, Math.min(cellWidth * 0.17, rect.height * 0.14));
-        const gap = Math.max(2, Math.min(cellWidth * 0.08, 10));
-        const labelGap = Math.max(2, Math.min(rect.height * 0.045, 7));
-        const padding = Math.max(2, Math.min(rect.height * 0.055, 10));
+        const cellWidth = rect.width / 4;
+        const showLabels = C.contagem.mostrarLegendas !== false;
+        const valueSize = Math.min(cellWidth * 0.45, rect.height * (showLabels ? 0.5 : 0.78));
+        const labelSize = Math.min(cellWidth * 0.18, rect.height * 0.2);
+        const labelGap = Math.min(rect.height * 0.05, 7);
 
         box.style.setProperty("--count-value-size", valueSize + "px");
         box.style.setProperty("--count-label-size", labelSize + "px");
-        box.style.setProperty("--count-gap", gap + "px");
         box.style.setProperty("--count-label-gap", labelGap + "px");
-        box.style.setProperty("--count-padding", padding + "px");
+        box.style.setProperty("--count-message-size", Math.min(rect.width * 0.055, rect.height * 0.5) + "px");
       }
 
       const buildScreens = ()=>{
@@ -422,7 +403,6 @@
         if(hasGift) list.push("giftScreen");
         if(hasDress) list.push("dressScreen");
         if(hasManual) list.push("manualScreen");
-        if(hasCountdown) list.push("countdownScreen");
         return list.map($);
       };
       const screens = buildScreens();
@@ -439,8 +419,11 @@
         screens.forEach(s=>{ if(s) s.classList.remove("active","fade-in","fade-out"); });
         const next = $(id); if(!next) return;
         next.classList.add("active");
-        if(id === "mainScreen") next.classList.add("fade-in");
-        if(id === "countdownScreen") requestAnimationFrame(updateCountdownScale);
+        if(id === "mainScreen"){
+          next.classList.add("fade-in");
+          updateCountdown();
+          requestAnimationFrame(updateCountdownScale);
+        }
       }
 
       // ---- MÚSICA (desbloqueio no toque, compatível com iPhone) ----------
@@ -619,73 +602,57 @@
         });
         $("manualBackBtn")?.addEventListener("click", ()=> show("mainScreen"));
       }
-      if(hasCountdown && $("countdownBtn")){
-        $("countdownBtn").addEventListener("click", (e)=>{
-          if(document.body.classList.contains("editor-on")) return;
-          e.preventDefault(); e.stopPropagation();
-          show("countdownScreen");
-          updateCountdown();
-        });
-        $("countdownBackBtn")?.addEventListener("click", ()=> show("mainScreen"));
-      }
       musicUnlock.addEventListener("click", async()=>{
         document.body.classList.remove("need-music");
         const ok = await startMusic(true);
         if(!ok) document.body.classList.add("need-music");
       });
       document.addEventListener("visibilitychange", ()=>{
+        if(!document.hidden) updateCountdown();
         if(!document.hidden && musicStarted && music.paused) startMusic(false);
       });
 
       // ---- CONTAGEM REGRESSIVA ---------------------------------------------
       let countdownTimer = null;
       function pad2(n){ return String(Math.max(0, n)).padStart(2, "0"); }
-      function addMonthsClamped(date, months){
-        const d = new Date(date);
-        const originalDay = d.getDate();
-        d.setDate(1);
-        d.setMonth(d.getMonth() + months);
-        const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-        d.setDate(Math.min(originalDay, lastDay));
-        return d;
-      }
-      function calendarDiff(now, target){
-        if(target <= now) return {months:0,days:0,hours:0,minutes:0,seconds:0,ended:true};
-        let months = (target.getFullYear()-now.getFullYear())*12 + target.getMonth()-now.getMonth();
-        let cursor = addMonthsClamped(now, months);
-        if(cursor > target){ months--; cursor = addMonthsClamped(now, months); }
-        let ms = target - cursor;
+      function countdownDiff(now, target){
+        if(target <= now) return {days:0,hours:0,minutes:0,seconds:0,ended:true};
+        // A arte tem quatro colunas: dias totais, horas, minutos e segundos.
+        let ms = target - now;
         const days = Math.floor(ms/86400000); ms %= 86400000;
         const hours = Math.floor(ms/3600000); ms %= 3600000;
         const minutes = Math.floor(ms/60000); ms %= 60000;
         const seconds = Math.floor(ms/1000);
-        return {months,days,hours,minutes,seconds,ended:false};
+        return {days,hours,minutes,seconds,ended:false};
       }
       function updateCountdown(){
-        if(!hasCountdown) return;
+        if(!hasCountdown) return false;
         const target = new Date(C.contagem.dataEvento);
         const box = $("countdownBox");
-        if(Number.isNaN(target.getTime())){
-          box.innerHTML = '<div class="countdown-message">Confira a data no config.js</div>';
-          return;
-        }
-        const diff = calendarDiff(new Date(), target);
-        if(diff.ended){
-          box.innerHTML = '<div class="countdown-message"></div>';
-          box.querySelector(".countdown-message").textContent = C.contagem.textoFinal || "A festa começou!";
-          return;
+        if(!box) return false;
+        const message = $("countdownMessage");
+        const invalid = Number.isNaN(target.getTime());
+        const diff = invalid ? null : countdownDiff(new Date(), target);
+        const finished = invalid || diff.ended;
+        box.classList.toggle("has-message", finished);
+        message.hidden = !finished;
+        if(finished){
+          message.textContent = invalid ? "Confira a data do evento." : (C.contagem.textoFinal || "A festa começou!");
+          box.setAttribute("aria-label", message.textContent);
+          clearInterval(countdownTimer);
+          return false;
         }
         const values = {
-          countMonths: diff.months,
           countDays: diff.days,
           countHours: diff.hours,
           countMinutes: diff.minutes,
           countSeconds: diff.seconds
         };
         Object.entries(values).forEach(([id,value])=>{ const el=$(id); if(el) el.textContent=pad2(value); });
+        box.setAttribute("aria-label", `Faltam ${diff.days} dias, ${diff.hours} horas, ${diff.minutes} minutos e ${diff.seconds} segundos.`);
+        return true;
       }
-      if(hasCountdown){
-        updateCountdown();
+      if(hasCountdown && updateCountdown()){
         countdownTimer = setInterval(updateCountdown, 1000);
       }
 
@@ -699,12 +666,10 @@
         pix:"PIX (copiar chave)",
         dress:"Dress Code",
         manual:"Manual do Convidado",
-        countdown:"Contagem (botão)",
-        counter:"Contador (na tela)",
+        counter:"Contador (na página principal)",
         backGift:"Voltar — Presentes",
         backDress:"Voltar — Dress Code",
-        backManual:"Voltar — Manual do Convidado",
-        backCountdown:"Voltar — Contagem"
+        backManual:"Voltar — Manual do Convidado"
       };
       const areaSelect = $("areaSelect");
       areaSelect.innerHTML = "";
@@ -720,7 +685,6 @@
       let selected = areaSelect.value || Object.keys(HOTSPOTS)[0] || "confirm";
 
       function editorScreenFor(key){
-        if(key === "counter" || key === "backCountdown") return "countdownScreen";
         if(key === "pix" || key === "backGift") return "giftScreen";
         if(key === "backDress") return "dressScreen";
         if(key === "backManual") return "manualScreen";
@@ -822,12 +786,10 @@
         el.addEventListener("pointerdown", e=>{
           if(!document.body.classList.contains("editor-on")) return;
           e.preventDefault(); e.stopPropagation(); selectArea(key);
-          const stageEl = key === "counter" ? $("countdownStage") :
-            key === "pix" ? $("giftStage") :
+          const stageEl = key === "pix" ? $("giftStage") :
             key === "backGift" ? $("giftStage") :
             key === "backDress" ? $("dressStage") :
-            key === "backManual" ? $("manualStage") :
-            key === "backCountdown" ? $("countdownStage") : $("mainStage");
+            key === "backManual" ? $("manualStage") : $("mainStage");
           const stage = stageEl.getBoundingClientRect();
           const start = Object.assign({x:e.clientX, y:e.clientY}, HOTSPOTS[key]);
           const resize = e.target.classList.contains("resize");
@@ -850,7 +812,7 @@
       });
 
       $("saveAreas").addEventListener("click",()=>{
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(HOTSPOTS));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({...HOTSPOTS, _counterLayout:COUNTER_LAYOUT}));
         alert("Áreas salvas neste navegador. Para deixar permanente no GitHub, copie o código e cole no config.js.");
       });
       $("resetAreas").addEventListener("click",()=>{
@@ -863,7 +825,6 @@
       if(hasGift) HOTSPOTS.backGift = JSON.parse(JSON.stringify((C.botoesVoltar.presentes||{}).posicao || {left:3.7,top:1.5,width:20,height:6}));
       if(hasDress) HOTSPOTS.backDress = JSON.parse(JSON.stringify((C.botoesVoltar.dresscode||{}).posicao || {left:3.7,top:1.5,width:20,height:6}));
       if(hasManual) HOTSPOTS.backManual = JSON.parse(JSON.stringify((C.botoesVoltar.manual||{}).posicao || {left:3.7,top:1.5,width:20,height:6}));
-      if(hasCountdown) HOTSPOTS.backCountdown = JSON.parse(JSON.stringify((C.botoesVoltar.contagem||{}).posicao || {left:3.7,top:1.5,width:20,height:6}));
         localStorage.removeItem(STORAGE_KEY);
         applyHotspots(); fillInputs();
       });
@@ -879,7 +840,6 @@
           (hasGift ? "    presentes: { mostrarTexto:"+backTextConfig.backGift+", posicao: "+JSON.stringify(HOTSPOTS.backGift)+" },\n" : "") +
           (hasDress ? "    dresscode: { mostrarTexto:"+backTextConfig.backDress+", posicao: "+JSON.stringify(HOTSPOTS.backDress)+" },\n" : "") +
           (hasManual ? "    manual: { mostrarTexto:"+backTextConfig.backManual+", posicao: "+JSON.stringify(HOTSPOTS.backManual)+" },\n" : "") +
-          (hasCountdown ? "    contagem: { mostrarTexto:"+backTextConfig.backCountdown+", posicao: "+JSON.stringify(HOTSPOTS.backCountdown)+" }\n" : "") +
           "  },";
         const pixCode = hasPix && HOTSPOTS.pix ?
           "\n\npix: {\n" +
@@ -893,20 +853,10 @@
           "    textoFinal: \"" + String(C.contagem.textoFinal || "").replace(/\"/g,'\\\"') + "\",\n" +
           "    corNumero: \"" + C.contagem.corNumero + "\",\n" +
           "    corLegenda: \"" + C.contagem.corLegenda + "\",\n" +
+          "    mostrarLegendas: " + (C.contagem.mostrarLegendas !== false) + ",\n" +
           "    posicao: { left:" + c.left + ", top:" + c.top + ", width:" + c.width + ", height:" + c.height + " }\n" +
           "  }" : "";
         $("exportBox").value = "hotspots: {\n" + lines + "\n  }," + pixCode + backCode + countdownCode;
-        /* legacy export removed */
-        return;
-        $("exportBox").value =
-          "hotspots: {\n" + lines + "\n  },\n\n" +
-          "contagem: {\n" +
-          "    dataEvento: \"" + C.contagem.dataEvento + "\",\n" +
-          "    textoFinal: \"" + String(C.contagem.textoFinal || "").replace(/\"/g,'\\\"') + "\",\n" +
-          "    corNumero: \"" + C.contagem.corNumero + "\",\n" +
-          "    corLegenda: \"" + C.contagem.corLegenda + "\",\n" +
-          "    posicao: { left:" + c.left + ", top:" + c.top + ", width:" + c.width + ", height:" + c.height + " }\n" +
-          "  }";
       }
       $("copyAreas").addEventListener("click", async()=>{
         exportAreas(); $("exportBox").select();
